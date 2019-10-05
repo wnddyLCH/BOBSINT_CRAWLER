@@ -1,3 +1,4 @@
+import time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException,StaleElementReferenceException
@@ -12,9 +13,8 @@ path='C:\\Users\\Admin\\PycharmProjects\\BOBSINT\\crawler2'
 keyword="inurl:or.kr filetype:xlsx"     #검색할 거 입력하면 됨
 
 # driver
-# driver = webdriver.Chrome(executable_path="C:\\Users\\lch85\\PycharmProjects\\bobcrawling\\chromedriver.exe")          #구글 실행할수 있도록 드라이버 설정
-driver = webdriver.Chrome('/Users/Admin/Downloads/chromedriver') #크롬 웹드라이버 디렉토리
-driver.implicitly_wait(3) # 로딩때문에 3초 딜레이 시킴
+driver = webdriver.Chrome('/Users/Admin/Downloads/chromedriver') #크롬 웹드라이버 디렉토리 (각자 다름)
+
 
 driver.get("https://cse.google.com/cse?cx=018411326708544098124:osxuozxkjot")                #구글 접속
 
@@ -30,15 +30,23 @@ find.click()
 
 url_get=driver.current_url          #현재페이지 URL 얻어옴
 
-time.sleep(2)
-
+page=1
+time.sleep(5)
 while True:
-    for idx, element in enumerate(driver.find_elements_by_css_selector("a.gs-title")):        #해당클래스 불러오고 클릭
-        element.click()
-        print(element.text)
+    for idx, element in enumerate(driver.find_elements_by_css_selector("a.gs-title")):  # 해당클래스 불러오고 클릭
+        try:
+            element.click() #해당 엘리먼트 클릭
+            print(element.text) #클릭한 엘리먼트의 text 속성(파일명) 출력
+            print(element.get_attribute('href')) #클릭한 엘리먼트의 URL = 파일 경로
+            time.sleep(2)
+
+        except:
+            None
+
+    try:
+        page+=1
+        driver.find_element_by_xpath('''//*[@id="___gcse_0"]/div/div/div/div[5]/div[2]/div/div/div[2]/div[10]/div/div[%s]''' % page).click()
         time.sleep(2)
 
-
-    #if driver.find_element_by_xpath('''//*[@id="pnnext"]/span[2]'''):
-        #next=driver.find_element_by_xpath('''//*[@id="pnnext"]/span[2]''')
-        #next.click()
+    except:
+        break
